@@ -12,8 +12,4 @@ public class Pair {
         this.first_element = 0;
     }
 
-    String appendTo(String s) {
-        s += this.first_element + "--" + this.second_element + ";";
-        return s;
-    }
 }

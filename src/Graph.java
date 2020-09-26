@@ -412,13 +412,6 @@ public class Graph {
         //(Нет циклов => дерево => планарный)
         ArrayList<Integer> c = getCycle();
         if(c.isEmpty()) {
-           /* ArrayList<ArrayList<Integer>> treefaces = new ArrayList<ArrayList<Integer>>();
-            ArrayList<Integer> treeouter = new ArrayList<Integer>();
-            treeouter.add(0);
-            treefaces.add(treeouter);
-            treefaces.add((ArrayList<Integer>) treeouter.clone());
-            return new Faces(treefaces, treeouter);
-            */
             return null;
         }
         //Списки граней

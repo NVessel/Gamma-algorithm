@@ -16,16 +16,4 @@ public class Utils {
         return (x<=y)?x:y;
     }
 
-    public static void createDotGraph(String dotFormat,
-                                      String filename) {
-        Graphviz gv = new Graphviz();
-        gv.addln(gv.start_graph());
-        gv.add(dotFormat);
-        gv.addln(gv.end_graph());
-        String type = "pdf";
-        gv.decreaseDpi();
-        gv.decreaseDpi();
-        File out = new File(filename+"."+ type);
-        gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
-    }
 }

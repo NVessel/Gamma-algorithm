@@ -8,7 +8,6 @@ public class Main {
     public static void main(String[] args) throws Exception {
         int dim;
         int[][] graph;
-        int non_counter = 0;
         FileReader fr = new FileReader("input.txt");
         FileWriter fw1 = new FileWriter("output1.txt", false);
         FileWriter fw2 = new FileWriter("output2.txt", false);
@@ -18,7 +17,6 @@ public class Main {
         String result;
         String q;
         String g6;
-        String dotString;
         int ssize;
         int counter;
         Graph gr;
@@ -80,27 +78,20 @@ public class Main {
             }
             gr = new Graph(graph);
             components = gr.getComps(gr);
-            dotString = "";
             if (components.size() == 1) {
                 dots = gr.getPoints(gr);
                 gr.setPoints(dots);
                 planar = gr.getPlanarLaying();
                 if (gr.isTree(gr)) {
-                    // fw1.write(plan_counter + " ");
                     fw1.write(g6);
                     fw1.write('\n');
                     continue;
                 }//tree processing
 
                 if (planar != null) {
-                  //  dotString = planar.getDotString(planar);
-                    // fw1.write(plan_counter + " ");
                     fw1.write(g6);
                     fw1.write('\n');
-                   // createDotGraph(dotString, "dotg");
                 } else {
-                    non_counter++;
-                    fw2.write(non_counter + " ");
                     fw2.write(g6);
                     fw2.write('\n');
                 }
@@ -127,10 +118,8 @@ public class Main {
                     graphs.add(lil_graph);
                 }
                 boolean flag = false; //find unplanar
-                boolean from_begin = true; // define which operation
-               for (Graph gra : graphs) {
+                for (Graph gra : graphs) {
                    if (gra.isTree(gra)) {
-                       dotString += gra.getPlaces().get(0) + ";";
                        continue;
                    }
                    dots = gra.getPoints(gra);
@@ -139,30 +128,17 @@ public class Main {
                    if (plan == null) {
                        flag = true;
                    }
-                   else if (from_begin) {
-                       from_begin = false;
-                       dotString = plan.getDotStringWithReplace(plan, gra.getPlaces());
-                   }
-                   else {
-                       dotString = plan.proceedDotStringWithReplace(plan,dotString,gra.getPlaces());
-                   }
                }
                 if (flag) {
-                    non_counter++;
-                    fw2.write(non_counter + " ");
                     fw2.write(g6);
                     fw2.write('\n');
                 }
                 else {
-                    for (Pair p : bridges) {
-                        dotString = p.appendTo(dotString);
-                    }
-                    //   fw1.write(plan_counter + " ");
                     fw1.write(g6);
                     fw1.write('\n');
-                   // createDotGraph(dotString, "dotg");
                 }
             }//unconnected
+
         }//upcoming graph
 
         fw1.close();
