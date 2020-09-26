@@ -6,12 +6,13 @@ public class Pair {
         this.second_element = y;
 
     }
+
     Pair() {
         this.second_element = 0;
         this.first_element = 0;
     }
 
-    public String appendTo(String s) {
+    String appendTo(String s) {
         s += this.first_element + "--" + this.second_element + ";";
         return s;
     }

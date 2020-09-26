@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+@SuppressWarnings("unchecked")
 public class Faces {
 
     private ArrayList<ArrayList<Integer>> interior;

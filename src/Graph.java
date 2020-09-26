@@ -2,11 +2,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.lang.Integer;
 
+@SuppressWarnings("unchecked")
 public class Graph {
     private int[][] matrix;
     private int size = 0;
     private int timer = 0;
-    private int dottimer = 0;
+    private int dot_timer = 0;
     private boolean[] cut_vert;
     private int[] places;
 
@@ -27,7 +28,7 @@ public class Graph {
         for(int i = 0;i < size;i++) {
             for(int j = i;j < size;j++) {
                 if(matrix[i][j] == 1) {
-                    res += String.valueOf(i) + " <----> " + String.valueOf(j) + "\n";
+                    res += i + " <----> " + j + "\n";
                 }
             }
         }
@@ -52,7 +53,7 @@ public class Graph {
     /*
     cut vertex
      */
-    public ArrayList<Integer> getPoints(Graph gr) {
+    ArrayList<Integer> getPoints(Graph gr) {
         boolean[] used = new boolean[gr.size];
         for (int i = 0; i < used.length; i++) {
             used[i] = false;
@@ -69,11 +70,11 @@ public class Graph {
         return result;
     }
 
-    public void pointDfs(int v, int p, boolean[] used,
+    private void pointDfs(int v, int p, boolean[] used,
                          int[] tin, int[] fup,
                          int[][] matrixx, ArrayList<Integer> r) {
         used[v] = true;
-        tin[v] = fup[v] = dottimer++;
+        tin[v] = fup[v] = dot_timer++;
         int children = 0;
         for (int i = 0; i < used.length; i++) {
             if (matrixx[v][i] == 0) continue;
@@ -90,7 +91,7 @@ public class Graph {
         if (p == -1 && children > 1) r.add(v);
     }
 
-    public void setPoints(ArrayList<Integer> r) {
+    void setPoints(ArrayList<Integer> r) {
         this.cut_vert = new boolean[size];
         for (int i = 0; i < size; i++) {
             this.cut_vert[i] = false;
@@ -103,7 +104,7 @@ public class Graph {
     /*
     bridges block
      */
-    public ArrayList<Pair> getBridges(Graph gr) {
+    ArrayList<Pair> getBridges(Graph gr) {
         boolean[] used = new boolean[gr.size];
         for (int i = 0; i < used.length; i++) {
             used[i] = false;
@@ -119,7 +120,7 @@ public class Graph {
         return result;
     }
 
-    public void bridgeDfs(int v, int p, boolean[] used, int[] tin, int[] fup,
+    private void bridgeDfs(int v, int p, boolean[] used, int[] tin, int[] fup,
                           int[][] matrix,ArrayList<Pair> r) {
         used[v] = true;
         tin[v] = fup[v] = timer++;
@@ -139,7 +140,7 @@ public class Graph {
     /*
     tree block
      */
-    public boolean isTree(Graph g) {
+    boolean isTree(Graph g) {
         boolean[] used = new boolean[g.size];
         for (int j = 0; j < g.size; j++) {
             used[j] = false;
@@ -147,7 +148,7 @@ public class Graph {
         int[][] cmatrix = g.matrix.clone();
         treeDfs(0,cmatrix,used);
         for (int j = 0; j < used.length; j++) {
-            if (used[j] == false) return false;
+            if (used[j]) return false;
         }
         int matrix_counter = 0;
         for (int i = 0; i < g.size; i++) {
@@ -160,8 +161,8 @@ public class Graph {
         else return false;
     }
 
-    public void treeDfs(int i, int[][] matrix, boolean[] used) {
-        if (used[i] == true) return;
+    private void treeDfs(int i, int[][] matrix, boolean[] used) {
+        if (used[i]) return;
         used[i] = true;
         for (int j = 0; j < used.length; j++) {
             if (matrix[i][j] == 1) treeDfs(j,matrix,used);
@@ -170,19 +171,18 @@ public class Graph {
     /*
     unconnected block
      */
-    public ArrayList<ArrayList<Integer>> getComps(Graph g) {
+    ArrayList<ArrayList<Integer>> getComps(Graph g) {
         boolean[] used = new boolean[g.size];
         for (int j = 0; j < g.size; j++) {
             used[j] = false;
         }
-        ArrayList<ArrayList<Integer>> comps = new ArrayList<ArrayList<Integer>>();
-        ArrayList<Integer> component = new ArrayList<Integer>();
-        ArrayList<Integer> clone = new ArrayList<Integer>();
+        ArrayList<ArrayList<Integer>> comps = new ArrayList<>();
+        ArrayList<Integer> component = new ArrayList<>();
+        ArrayList<Integer> clone;
         for (int i = 0; i < g.size; i++) {
             if (!used[i]) {
                 component.clear();
                 compDfs(i,g.matrix,used,component);
-                //
                 clone = (ArrayList<Integer>)component.clone();
                 comps.add(clone);
             }
@@ -190,20 +190,20 @@ public class Graph {
         return comps;
     }
 
-    public void compDfs(int v, int matrix[][], boolean[] used, ArrayList<Integer> co) {
+    private void compDfs(int v, int matrix[][], boolean[] used, ArrayList<Integer> co) {
         used[v] = true;
-        co.add(new Integer(v));
+        co.add(v);
         for (int i = 0; i < used.length; i++) {
             if (matrix[v][i] == 0) continue;
             int to = i;
             if (!used[to]) compDfs(to,matrix,used,co);
         }
     }
-    public void addEdge(int k, int m) {
+    private void addEdge(int k, int m) {
         matrix[k][m] = matrix[m][k] = 1;
     }
 
-    public boolean containsEdge(int k, int m) {
+    private boolean containsEdge(int k, int m) {
         return (matrix[k][m] == 1);
     }
 
@@ -244,16 +244,13 @@ public class Graph {
         return false;
     }
 
-    public ArrayList<Integer> getCycle() {
+    private ArrayList<Integer> getCycle() {
         ArrayList<Integer> cycle = new ArrayList<>();
         boolean hasCycle = dfsCycle(cycle, new int[size], -1, 0);
         if (!hasCycle)
-            //return null;
-            return new ArrayList<Integer>();
+            return new ArrayList<>();
         else {
-            ArrayList<Integer> result = new ArrayList<>();
-            for (int v: cycle)
-                result.add(v);
+            ArrayList<Integer> result = new ArrayList<>(cycle);
             return result;
         }
     }
@@ -353,7 +350,7 @@ public class Graph {
     }
 
     //Укладка цепи, описание матрицы смежности
-    public static void layChain(boolean[][] result, ArrayList<Integer> chain, boolean cyclic) {
+    private static void layChain(boolean[][] result, ArrayList<Integer> chain, boolean cyclic) {
         for (int i = 0; i < chain.size() - 1; i++) {
             result[chain.get(i)][chain.get(i + 1)] = true;
             result[chain.get(i + 1)][chain.get(i)] = true;
@@ -400,7 +397,7 @@ public class Graph {
     //Получить плоскую укладку графа
     //Возвращаются все грани уложенного планарного графа
     //Если это невозможно(граф не планарный), то null
-    public Faces getPlanarLaying() {
+     Faces getPlanarLaying() {
         //Если граф одновершинный, то возвращаем две грани
         if (size == 1) {
             ArrayList<ArrayList<Integer>> faces = new ArrayList<>();
@@ -571,7 +568,7 @@ public class Graph {
                         intFaces.add(face2);
                     } else { //Если целевая грань совпала с внешней
                         //Все то же самое, только одна из порожденных граней - новая внешняя грань
-                        ArrayList<Integer> newOuterFace = new ArrayList<>();
+                        ArrayList<Integer> newOuterFace;
                         newOuterFace = face;
                             newOuterFace.addAll(chain);
                             face2.addAll(chain);
